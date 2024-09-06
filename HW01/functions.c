@@ -16,6 +16,7 @@ void int_to_binary(int n, char *binary_str, int bits)
         n >>= 1;
     }
 }
+// Function to check if a number is a power of 2
 int is_power_of_2(int n)
 {
     return (n & (n - 1)) == 0;
@@ -23,6 +24,12 @@ int is_power_of_2(int n)
 
 void global_sum(double *result, int rank, int size, double my_value)
 {
+    if(size <= 0){
+        printf("Error: global_sum() requires a positive number of processes\n");
+        MPI_Finalize();
+        exit(1);
+    }
+    
     if (!is_power_of_2(size))
     {
         if (rank == 0)
