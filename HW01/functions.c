@@ -1,60 +1,38 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <mpi.h>
-#include <unistd.h>
+#include "functions.h"
+#include <math.h>
 
-int is_power_of_two(int n)
-{
-    return (n & (n - 1)) == 0;
-}
+void global_sum(double* result, int rank, int size, double my_value) {
+    int partner, phase, num_phases;
+    double received_value, sum = my_value;  // Initialize sum with my_value
 
-void global_sum(double *result, int rank, int size, double my_value)
-{
-    if (!is_power_of_two(size))
-    {
-        if (rank == 0)
-        {
-            fprintf(stderr, "Number of processors must be a power of two.\n");
+    // Calculate the number of phases (log2(size))
+    num_phases = (int) log2(size);
+
+    for (phase = 0; phase < num_phases; phase++) {
+        // Determine partner for this phase
+        partner = rank ^ (1 << phase);
+
+        if (rank < partner) {
+            // Receive from partner
+            MPI_Recv(&received_value, 1, MPI_DOUBLE, partner, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            printf(" Phase %d - P %d (%02d) receiving from P %d (%02d), val %.1f\n", phase, rank, rank, partner, partner, received_value);
+            sum += received_value;  // Accumulate the received value
+            MPI_Ssend(&my_value, 1, MPI_DOUBLE, partner, 0, MPI_COMM_WORLD);
+            printf(" Phase %d - P %d (%02d) sending   to   P %d (%02d), val %.1f\n", phase, rank, rank, partner, partner, my_value);
+        } else {
+            MPI_Ssend(&my_value, 1, MPI_DOUBLE, partner, 0, MPI_COMM_WORLD);
+            printf(" Phase %d - P %d (%02d) sending   to   P %d (%02d), val %.1f\n", phase, rank, rank, partner, partner, my_value);
+            MPI_Recv(&received_value, 1, MPI_DOUBLE, partner, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            printf(" Phase %d - P %d (%02d) receiving from P %d (%02d), val %.1f\n", phase, rank, rank, partner, partner, received_value);
+            sum += received_value;  // Accumulate the received value
         }
-        MPI_Finalize();
-        exit(EXIT_FAILURE);
+
+        // After each phase, update my_value with the accumulated sum so far
+        my_value = sum;
     }
 
-    double local_sum = my_value;
-    MPI_Status status;
-
-    // Tree-based reduction
-    for (int step = 1, phase = 0; step < size; step *= 2, phase++)
-    {
-        if (rank % (2 * step) == 0)
-        {
-            double received_value;
-            MPI_Recv(&received_value, 1, MPI_DOUBLE, rank + step, 0, MPI_COMM_WORLD, &status);
-            printf(" Phase %d - P %d (%02d) receiving from P %d (%02d), val %.1f\n", phase, rank, rank, rank + step, rank + step, received_value);
-            local_sum += received_value;
-        }
-        else if (rank % step == 0)
-        {
-            MPI_Ssend(&local_sum, 1, MPI_DOUBLE, rank - step, 0, MPI_COMM_WORLD);
-            printf(" Phase %d - P %d (%02d) sending   to   P %d (%02d), val %.1f\n", phase, rank, rank, rank - step, rank - step, local_sum);
-            break;
-        }
-    }
-
-    // Broadcast the result
-    for (int step = size / 2, phase = 0; step >= 1; step /= 2, phase++)
-    {
-        if (rank % (2 * step) == 0)
-        {
-            MPI_Ssend(&local_sum, 1, MPI_DOUBLE, rank + step, 0, MPI_COMM_WORLD);
-            printf(" Phase %d - P %d (%02d) sending   to   P %d (%02d), val %.1f\n", phase, rank, rank, rank + step, rank + step, local_sum);
-        }
-        else if (rank % step == 0)
-        {
-            MPI_Recv(&local_sum, 1, MPI_DOUBLE, rank - step, 0, MPI_COMM_WORLD, &status);
-            printf(" Phase %d - P %d (%02d) receiving from P %d (%02d), val %.1f\n", phase, rank, rank, rank - step, rank - step, local_sum);
-        }
-    }
-
-    *result = local_sum;
+    // Store the final result in the provided pointer
+    *result = sum;
 }
