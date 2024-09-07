@@ -24,11 +24,7 @@ int is_power_of_2(int n)
 
 void global_sum(double *result, int rank, int size, double my_value)
 {
-    if(size <= 0){
-        printf("Error: global_sum() requires a positive number of processes\n");
-        MPI_Finalize();
-        exit(1);
-    }
+    //printf("Size: %d\n", size);
     
     if (!is_power_of_2(size))
     {
