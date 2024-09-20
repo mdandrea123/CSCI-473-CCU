@@ -17,4 +17,4 @@ trap.o: trap.c trap.h
 	$(MCC) $(CFLAGS) -c trap.c
 
 clean:
-	rm -f $(PROGS) *.o core*
+	rm -f $(PROGS) *.o core* *.txt *.png

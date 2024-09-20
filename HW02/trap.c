@@ -8,7 +8,7 @@
 
 #define PI 3.14159265358979323846
 
-void parse_input(int argc, char *argv[], int my_rank, double *a_p, double *b_p, int *n_p, int *f_p) {
+void parse_input(int argc, char *argv[], int my_rank, double *a_p, double *b_p, long long int *n_p, int *f_p) {
     int opt;
     if (argc == 1 && my_rank == 0) {
         printf("Usage: mpirun -np <num_processes> ./mpi_trap -n <num divisions> -a <integrate from> -b <integrate to> -f <function to integrate>\n");
@@ -19,7 +19,7 @@ void parse_input(int argc, char *argv[], int my_rank, double *a_p, double *b_p, 
     while ((opt = getopt(argc, argv, "n:a:b:f:")) != -1) {
         switch (opt) {
             case 'n':
-                *n_p = atoi(optarg);
+                *n_p = atoll(optarg);  // Use atoll to handle long long int
                 break;
             case 'a':
                 *a_p = atof(optarg);
@@ -39,9 +39,9 @@ void parse_input(int argc, char *argv[], int my_rank, double *a_p, double *b_p, 
     }
 }
 
-double Trap(double left_endpt, double right_endpt, int trap_count, double base_len, int func_choice, int rank) {
+double Trap(double left_endpt, double right_endpt, long long int trap_count, double base_len, int func_choice) {
     double estimate, x;
-    int i;
+    long long int i;
 
     double (*func_ptr)(double);
     switch (func_choice) {
@@ -57,10 +57,9 @@ double Trap(double left_endpt, double right_endpt, int trap_count, double base_l
         default:
             func_ptr = f1;  // Default to f1 if invalid function choice
     }
-    printf("rank %d local a %.2f, local b %.2f, local n %d\n", rank, left_endpt, right_endpt, trap_count);
 
     estimate = (func_ptr(left_endpt) + func_ptr(right_endpt)) / 2.0;
-    for (i = 1; i <= trap_count-1; i++) {
+    for (i = 1; i < trap_count; i++) {  // Loop should be < trap_count, not <=
         x = left_endpt + i * base_len;
         estimate += func_ptr(x);
     }
