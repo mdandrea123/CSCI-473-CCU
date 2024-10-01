@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     dtype **matrix = NULL;    // Declare a pointer to a 2D array of dtype.
     int rows = atoi(argv[1]); // Convert the first command-line argument to the number of rows.
     int cols = atoi(argv[2]); // Convert the second command-line argument to the number of columns.
-    char *fname = argv[3];    // Store the fifth command-line argument as the output file name.
+    char *fname = argv[3];    // Store the third command-line argument as the output file name.
 
     // Allocate memory for a 2D array, initialize it with random values, write it to a file, and then free the memory.
     my_allocate2d(&matrix, rows, cols);
