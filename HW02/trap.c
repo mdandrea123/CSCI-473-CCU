@@ -59,7 +59,7 @@ double Trap(double left_endpt, double right_endpt, long long int trap_count, dou
     }
 
     estimate = (func_ptr(left_endpt) + func_ptr(right_endpt)) / 2.0;
-    for (i = 1; i < trap_count; i++) {  // Loop should be < trap_count, not <=
+    for (i = 1; i < trap_count; i++) {  
         x = left_endpt + i * base_len;
         estimate += func_ptr(x);
     }
