@@ -4,36 +4,27 @@
 #include <math.h>
 #include <mpi.h>
 #include <time.h>
+#include "functions.h"
 
 void simulate_neutrons(double A, double C, double H, int n, int *local_results);
 
 int main(int argc, char *argv[]) {
     int rank, size;
-    double A = 0.0, C = 0.0, H = 0.0;
-    int n = 0;
-    int opt;
-
+    double A, C, H;
+    int n;
+    
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
     // Parse command-line arguments (only process 0 needs to do this)
     if (rank == 0) {
-        while ((opt = getopt(argc, argv, "A:C:H:n:")) != -1) {
-            switch (opt) {
-                case 'A': A = atof(optarg); break;
-                case 'C': C = atof(optarg); break;
-                case 'H': H = atof(optarg); break;
-                case 'n': n = atoi(optarg); break;
-                default:
-                    fprintf(stderr, "Usage: %s -A <value> -C <value> -H <value> -n <value>\n", argv[0]);
-                    MPI_Abort(MPI_COMM_WORLD, 1);
-            }
-        }
+        parse(argc, argv, &A, &C, &H, &n);
 
+        // Check if all required arguments are provided
         if (A == 0.0 || C == 0.0 || H == 0.0 || n == 0) {
             fprintf(stderr, "All arguments (-A, -C, -H, -n) are required.\n");
-            MPI_Abort(MPI_COMM_WORLD, 1);
+            exit(EXIT_FAILURE);
         }
     }
 
@@ -44,8 +35,7 @@ int main(int argc, char *argv[]) {
     MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
     // Calculate local number of neutrons to simulate
-    int local_n = n / size;
-    if (rank < n % size) local_n++;
+    int local_n = BLOCK_SIZE(rank, size, n);
 
     // Simulate neutrons
     int local_results[3] = {0}; // [reflected, absorbed, transmitted]

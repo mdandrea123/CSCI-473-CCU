@@ -3,35 +3,16 @@
 #include <unistd.h>
 #include <math.h>
 #include <time.h>
+#include "functions.h"
 
 // Function prototypes
 void simulate_neutrons(double A, double C, double H, int n);
 
 int main(int argc, char *argv[]) {
-    double A = 0.0, C = 0.0, H = 0.0;
-    int n = 0;
-    int opt;
-
-    // Parse command-line arguments
-    while ((opt = getopt(argc, argv, "A:C:H:n:")) != -1) {
-        switch (opt) {
-            case 'A':
-                A = atof(optarg);
-                break;
-            case 'C':
-                C = atof(optarg);
-                break;
-            case 'H':
-                H = atof(optarg);
-                break;
-            case 'n':
-                n = atoi(optarg);
-                break;
-            default:
-                fprintf(stderr, "Usage: %s -A <value> -C <value> -H <value> -n <value>\n", argv[0]);
-                exit(EXIT_FAILURE);
-        }
-    }
+   double A, C, H;
+    int n;
+    
+    parse(argc, argv, &A, &C, &H, &n);
 
     // Check if all required arguments are provided
     if (A == 0.0 || C == 0.0 || H == 0.0 || n == 0) {

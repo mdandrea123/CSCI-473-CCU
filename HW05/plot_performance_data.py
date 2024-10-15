@@ -20,6 +20,12 @@ def plot_timing(df):
         subset = df[df['neutrons'] == n]
         ax.plot(subset['processes'], subset['time'], marker='.', linestyle='-', color=colors[i], label=f'{n//1000000}M')
     
+    # Calculate and plot ideal timing based on the first process timing
+    base_time = df[df['processes'] == 1]['time'].values[0]
+    ideal_processes = np.arange(1, 65)
+    ideal_time = base_time / ideal_processes
+    ax.plot(ideal_processes, ideal_time, 'k--', label='Ideal')
+
     ax.set_xlim(0, 64)
     ax.set_xticks(range(0, 65, 10))
     
