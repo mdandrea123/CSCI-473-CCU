@@ -77,7 +77,7 @@ def main():
     parser = argparse.ArgumentParser(description='Create movie from stencil data')
     parser.add_argument('input_file', help='Input binary data file')
     parser.add_argument('output_file', help='Output movie file (MP4)')
-    parser.add_argument('--fps', type=int, default=20, help='Frames per second (default: 20)')
+    parser.add_argument('--fps', type=int, default=30, help='Frames per second (default: 30)')
     
     args = parser.parse_args()
     

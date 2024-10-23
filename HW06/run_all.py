@@ -19,7 +19,7 @@ run_program(["make", "clean", "all"])  # Replace arg1, arg2 with actual argument
 run_program(["./make-2d", "100", "100", "initial100x100x500.dat"])  # Replace arg1, arg2 with actual arguments if any
 
 # Running print-2d
-run_program(["./print-2d", "initial100x100x500.dat"])  # Replace arg1, arg2 with actual arguments if any
+# run_program(["./print-2d", "initial100x100x500.dat"])  # Replace arg1, arg2 with actual arguments if any
 
 # Running stencil-2d
 run_program(["./stencil-2d", "500", "initial100x100x500.dat", "final100x100x500.dat", "final100x100x500.raw"])  # Replace arg1, arg2 with actual arguments if any
