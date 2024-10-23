@@ -12,6 +12,10 @@ int main(int argc, char *argv[]) {
     char *input_file = argv[1];
     int rows, cols;
 
+    double start, finish, elapsed;
+
+    GET_TIME(start);
+
     // Open the input file
     FILE *fp = fopen(input_file, "rb");
     if (fp == NULL) {
@@ -33,9 +37,14 @@ int main(int argc, char *argv[]) {
 
     fclose(fp);
 
+    GET_TIME(finish);
+    elapsed = finish - start;
+
     // Print the data
     printf("Data from file %s (%d rows x %d columns):\n\n", input_file, rows, cols);
     print_2d_array(data, rows, cols);
+    
+    printf("\nElapsed time = %e seconds\n", elapsed);
 
     // Free allocated memory
     free_2d_array(data, rows);

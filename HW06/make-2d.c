@@ -13,11 +13,13 @@ int main(int argc, char *argv[]) {
     int cols = atoi(argv[2]);
     char *output_file = argv[3];
 
+    double start, finish, elapsed;
+
     if (rows <= 0 || cols <= 0) {
         fprintf(stderr, "Error: rows and columns must be positive integers\n");
         exit(EXIT_FAILURE);
     }
-
+    GET_TIME(start);
     // Allocate 2D array
     double **data = allocate_2d_array(rows, cols);
 
@@ -54,7 +56,10 @@ int main(int argc, char *argv[]) {
 
     // Free allocated memory
     free_2d_array(data, rows);
+    GET_TIME(finish);
+    elapsed = finish - start;
 
     printf("Initial conditions written to %s\n", output_file);
+    printf("Elapsed time = %e seconds\n", elapsed);
     return 0;
 }

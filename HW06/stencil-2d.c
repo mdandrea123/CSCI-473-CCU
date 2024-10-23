@@ -15,12 +15,16 @@ int main(int argc, char *argv[]) {
     char *output_file = argv[3];
     char *all_iterations_file = argv[4];
 
+    double start, finish, elapsed;
+
     int rows, cols;
 
     if (iterations <= 0) {
         fprintf(stderr, "Error: number of iterations must be positive\n");
         exit(EXIT_FAILURE);
     }
+
+    GET_TIME(start);
 
     // Open the input file
     FILE *fp = fopen(input_file, "rb");
@@ -108,8 +112,12 @@ int main(int argc, char *argv[]) {
     free_2d_array(data, rows);
     free_2d_array(temp, rows);
 
+    GET_TIME(finish);
+    elapsed = finish - start;
+
     printf("Stencil operation completed. Final state written to %s\n", output_file);
     printf("All iterations written to %s\n", all_iterations_file);
+    printf("Elapsed time = %e seconds\n", elapsed);
 
     return 0;
 }
