@@ -1,0 +1,6 @@
+A run_all shell script was provided. It is located in MIDTERM/code and can be run with ./run_all.sh from the code folder. 
+
+Something to note is that the makefile specifies gcc version 14, because I wrote this on macOS and the standard version of gcc does not recognize omp.h on macOS.
+This may need to be changed if attempting to run a different OS. 
+
+The images in the report and presentation are located in MIDTERM/data/data_for_paper, as well as the .csv files used to produce them.
