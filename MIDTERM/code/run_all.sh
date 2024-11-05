@@ -29,9 +29,9 @@ python3 ../data/gather_data_openmp.py omp_results.csv
 echo "Results stored in omp_results.csv"
 
 echo "Plotting pthreads data"
-python3 ../data/plot_data_threads.py pth_results.csv
+python3 ../data/plot_pth_results.py pth_results.csv
 echo "Plotting complete"
 
 echo "Plotting openmp data"
-python3 ../data/plot_data_openmp.py omp_results.csv
+python3 ../data/plot_omp_results.py omp_results.csv
 echo "Plotting complete"
